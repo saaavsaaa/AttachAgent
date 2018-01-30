@@ -1,7 +1,17 @@
 package cn.tellwhy.report.agent;
 
+import jdk.internal.org.objectweb.asm.ClassReader;
+import jdk.internal.org.objectweb.asm.ClassVisitor;
+import jdk.internal.org.objectweb.asm.ClassWriter;
+
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
+import java.security.ProtectionDomain;
+
+import static jdk.internal.org.objectweb.asm.Opcodes.ASM4;
+import static jdk.internal.org.objectweb.asm.Opcodes.V1_7;
 
 
 /*
@@ -18,6 +28,18 @@ Exception in thread "Attach Listener" java.lang.NoSuchMethodException: cn.tellwh
 public class AgentTest {
     public static void premain(String agentArgs, Instrumentation inst){
         System.out.println(agentArgs);
+    
+        inst.addTransformer(new ClassFileTransformer() {
+            public byte[] transform(ClassLoader l, String name, Class c,
+                                    ProtectionDomain d, byte[] b)
+                    throws IllegalClassFormatException {
+                ClassReader cr = new ClassReader(b);
+                ClassWriter cw = new ClassWriter(cr, 0);
+                ClassVisitor cv = new ChangeVersionAdapter(cw);
+                cr.accept(cv, 0);
+                return cw.toByteArray();
+            }
+        });
     }
     
     public static void agentmain(String args, Instrumentation inst) throws NoSuchFieldException, IllegalAccessException {
@@ -41,5 +63,17 @@ public class AgentTest {
 //        inst.addTransformer(new TestClassFileTransformer());
         
         System.out.println("agent attached.");
+    }
+}
+
+class ChangeVersionAdapter extends ClassVisitor {
+    public ChangeVersionAdapter(ClassVisitor cv) {
+        super(ASM4, cv);
+    }
+    
+    @Override
+    public void visit(int version, int access, String name,
+                      String signature, String superName, String[] interfaces) {
+        cv.visit(V1_7, access, name, signature, superName, interfaces); //major version
     }
 }
