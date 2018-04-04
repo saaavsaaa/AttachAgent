@@ -10,9 +10,6 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 import java.security.ProtectionDomain;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.ASM4;
-import static jdk.internal.org.objectweb.asm.Opcodes.V1_7;
-
 
 /*
 Exception in thread "Attach Listener" java.lang.NoSuchMethodException: cn.tellwhy.report.agent.AgentTest.agentmain(java.lang.String, java.lang.instrument.Instrumentation)
@@ -24,8 +21,20 @@ Exception in thread "Attach Listener" java.lang.NoSuchMethodException: cn.tellwh
 
 /**
  * Created by aaa on 17-12-19.
+ * META-INF/MANIFEST.MF build by build.gradle
+ 
+     Manifest-Version: 1.0
+     Agent-Class: cn.tellwhy.report.agent.AgentTest
+     Premain-Class: cn.tellwhy.report.agent.AgentTest
+     Boot-Class-Path: btrace-boot.jar
+     Can-Redefine-Classes: true
+     Can-Retransform-Classes: true
+     Main-Class: cn.tellwhy.report.agent.AgentTest
+ 
  */
 public class AgentTest {
+//    public static void main(String[] args){}
+        
     public static void premain(String agentArgs, Instrumentation inst){
         System.out.println(agentArgs);
     
@@ -63,17 +72,5 @@ public class AgentTest {
 //        inst.addTransformer(new TestClassFileTransformer());
         
         System.out.println("agent attached.");
-    }
-}
-
-class ChangeVersionAdapter extends ClassVisitor {
-    public ChangeVersionAdapter(ClassVisitor cv) {
-        super(ASM4, cv);
-    }
-    
-    @Override
-    public void visit(int version, int access, String name,
-                      String signature, String superName, String[] interfaces) {
-        cv.visit(V1_7, access, name, signature, superName, interfaces); //major version
     }
 }
