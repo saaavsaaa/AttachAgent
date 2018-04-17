@@ -4,11 +4,18 @@ import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.ClassWriter;
 
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.security.ProtectionDomain;
+import java.util.Properties;
 
 
 /*
@@ -33,8 +40,6 @@ Exception in thread "Attach Listener" java.lang.NoSuchMethodException: cn.tellwh
  
  */
 public class AgentTest {
-//    public static void main(String[] args){}
-        
     public static void premain(String agentArgs, Instrumentation inst){
         System.out.println(agentArgs);
     

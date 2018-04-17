@@ -14,8 +14,8 @@ public class ChangeVersionAdapter extends ClassVisitor {
     }
     
     @Override
-    public void visit(int version, int access, String name,
-                      String signature, String superName, String[] interfaces) {
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        //列出经过栈的所有方法
         System.out.println(name);
         cv.visit(V1_7, access, name, signature, superName, interfaces); //major version
     }
